@@ -1,31 +1,11 @@
-const dotenv = require('dotenv')
-
-dotenv.config();
-
-const {
-    PORT,
-    HOST,
-    HOST_URL,
-    API_KEY,
-    AUTH_DOMAIN,
-    DATABASE_URL,
-    PROJECT_ID,
-    STORAGE_BUCKET,
-    MESSAGING_SENDER_ID,
-    APP_ID
-} = process.env;
-
 module.exports = {
-    port: PORT,
-    host: HOST,
-    url: HOST_URL,
     firebaseConfig: {
-        apiKey: API_KEY,
-        authDomain: AUTH_DOMAIN,
-        databaseURL: DATABASE_URL,
-        projectId: PROJECT_ID,
-        storageBucket: STORAGE_BUCKET,
-        messagingSenderId: MESSAGING_SENDER_ID,
-        appId: APP_ID
+        apiKey: "AIzaSyCzu_Fkqa - m6u2fn4dpmAOJEX - aYXgRsY8",
+        authDomain: "curawella - e8ce8.firebaseapp.com",
+        databaseURL: "https://curawella-e8ce8-default-rtdb.firebaseio.com",
+        projectId: "curawella - e8ce8",
+        storageBucket: "curawella - e8ce8.appspot.com",
+        messagingSenderId: "467008241156",
+        appId: "1: 467008241156: web: 6870d01af207cc3c427f51"
     }
 }
