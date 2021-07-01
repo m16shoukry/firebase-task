@@ -66,9 +66,9 @@ app.get('/doctors/:uid', async (req, res) => {
 *    description: Update doctor's session duration
 *    parameters:
 *    - session: title
-*      description: session duration
+*      description: set new session duration
 *      required: true
-*      type: Nimber
+*      type: Number
 *    responses:
 *     200:
 *       description: Success
@@ -102,30 +102,37 @@ app.put('/doctors/:uid', async (req, res) => {
 *      description: patientId
 *      required: true
 *      type: String
+*
 *    - corona: title
 *      description: corona
 *      required: true
 *      type: Boolean
+*
 *    - orderID: title
 *      description: orderID
 *      required: true
 *      type: Number
+*
 *    - packageName: title
 *      description: package Name
 *      required: true
 *      type: String
+*
 *    - patName: title
 *      description: patName
 *      required: true
 *      type: String
+*
 *    - paymentMethod: title
 *      description: Patient name
 *      required: true
 *      type: String
+*
 *    - status: title
 *      description: Patient name
 *      required: true
 *      type: String
+*
 *    responses:
 *      201:
 *       description: booked successfuly
@@ -178,6 +185,35 @@ app.put('/durations/:uid', async (req, res) => {
     console.error(error);
   })
 })
+
+/**
+* @swagger
+* /appointments/uid:
+*  get:
+*    description: Get doctor’s appointments for a specific doctor
+*    responses:
+*      201:
+*        description: Success
+*/
+app.get('/appointments/:uid', async (req, res) => {
+  try {
+    const appointments = await appointmentsRef.child(req.params.uid).once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        childSnapshot.key
+      })
+    })
+    res.json(appointments)
+
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+
+
+
+
+
 
 
 /**
