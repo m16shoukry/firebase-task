@@ -130,12 +130,14 @@ app.put('/durations', async (req, res) => {
 * @swagger
 * /:
 *   get:
-*     description: defualt page    
+*     description: default page    
 *       
 */
 app.get('/', (req, res) => {
   res.send('index')
 })
 
-app.listen(config.port, () =>
-  console.log('App is listening on port ' + config.port))
+const PORT = 5000
+
+app.listen(PORT, () =>
+  console.log('App is listening on port ' + PORT))
