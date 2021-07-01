@@ -4,7 +4,7 @@ const swaggerUI = require('swagger-ui-express')
 const config = require('./config.js')
 const admin = require("firebase-admin")
 
-var serviceAccount = require("E:/curawella-task/curawella-e8ce8-firebase-adminsdk-udwnl-06fb0be2fa.json")
+const serviceAccount = require("E:/curawella-task/curawella-e8ce8-firebase-adminsdk-udwnl-06fb0be2fa.json")
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -25,7 +25,7 @@ const appointmentsRef = database.ref('/appointments')
 const swaggerOptions = {
   swaggerDefinition: {
     info: {
-      title: 'Task Library API',
+      title: 'Task APIs',
       version: '1.0.0'
     }
   },
@@ -35,29 +35,38 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions)
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
-/*
+/**
 * @swagger
 * /doctors:
 *   get:
-*     description: GET doctor's session duration    
+*     description: GET doctor's session duration
+*     responses:
+*       201:
+*         description: Success
 */
-app.get('/doctors/:key', async (req, res) => {
-  await doctorsRef.child(req.params.key).child("session").get().then((snapshot) => {
-    if (snapshot.exists()) {
-      res.send(snapshot.val())
+app.get('/doctors/:uid', async (req, res) => {
+  try {
+    const sessionDuration = await doctorsRef.child(req.params.uid).child("session").get()
+
+    if (sessionDuration.exists()) {
+      res.json(sessionDuration.val())
     } else {
-      res.send("No data available")
+      res.send("Not found")
     }
-  }).catch((error) => {
+
+  } catch (error) {
     console.error(error)
-  })
+  }
 })
 
-/*
+/**
 * @swagger
 * /doctors:
 *   put:
-*     description: UPDATE doctor's session duration    
+*    description: UPDATE doctor's session duration
+*    responses:
+*     200:
+*       description: Success
 */
 app.put('/doctors/:key', async (req, res) => {
   const newduration = req.body.session
@@ -74,21 +83,43 @@ app.put('/doctors/:key', async (req, res) => {
 })
 
 
-/*
+/** 
 * @swagger
 * /appointments:
 *   post:
-*     description: CREATE new appointment
-*     paramaters:
-*      - Patient
-*        corona
-*        orderID
-*        packageName
-*        patName
-*        paymentMethod
-*        status
-*        type
-*
+*    description: Create new appointment
+*    parameters:
+*    - patient: title
+*      description: patientId
+*      required: true
+*      type: String
+*    - corona: title
+*      description: corona
+*      required: true
+*      type: Boolean
+*    - orderID: title
+*      description: orderID
+*      required: true
+*      type: Number
+*    - packageName: title
+*      description: package Name
+*      required: true
+*      type: String
+*    - patName: title
+*      description: patName
+*      required: true
+*      type: String
+*    - paymentMethod: title
+*      description: Patient name
+*      required: true
+*      type: String
+*    - status: title
+*      description: Patient name
+*      required: true
+*      type: String
+*    responses:
+*      201:
+*       description: booked successfuly
 *       
 */
 app.post('/appointments', async (req, res) => {
@@ -104,7 +135,7 @@ app.post('/appointments', async (req, res) => {
       status: req.body.status,
       type: req.body.type
     })
-    res.send('booked successfuly')
+    res.status(201).send('booked successfuly')
   } catch (error) {
     res.status(400).send(error.message)
   }
@@ -126,12 +157,14 @@ app.put('/durations', async (req, res) => {
 })
 
 
-/*
+/**
 * @swagger
 * /:
 *   get:
-*     description: default page    
-*       
+*     description: default page
+*     responses:
+*       200:
+*         description: Success
 */
 app.get('/', (req, res) => {
   res.send('index')
