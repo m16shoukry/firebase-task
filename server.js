@@ -64,6 +64,11 @@ app.get('/doctors/:uid', async (req, res) => {
 * /doctors/:uid:
 *   put:
 *    description: Update doctor's session duration
+*    parameters:
+*    - session: title
+*      description: session duration
+*      required: true
+*      type: Nimber
 *    responses:
 *     200:
 *       description: Success
@@ -128,8 +133,7 @@ app.put('/doctors/:uid', async (req, res) => {
 */
 app.post('/appointments', async (req, res) => {
   try {
-    const pid = appointmentsRef.push().key
-    await appointmentsRef.child(pid).child(req.body.appointment_id).set({
+    await appointmentsRef.child(req.params.uid).child().set({
       Patient: req.body.Patient, //hashed
       corona: req.body.corona,
       orderID: req.body.orderID,
@@ -139,25 +143,40 @@ app.post('/appointments', async (req, res) => {
       status: req.body.status,
       type: req.body.type
     })
-    res.status(201).send('booked successfuly')
+    res.status(201).send('booked successfully')
   } catch (error) {
     res.status(400).send(error.message)
   }
 })
 
-// activate/deactivate durations
-app.put('/durations', async (req, res) => {
-  await repetitionRef.child(req.body.uid).child(req.body.UTC).child(req.body.UTCS).child("active").get()
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        snapshot.val().update(req.body.active)
-        res.send(snapshot.val())
-      } else {
-        res.status(404).send("No data available")
-      }
-    }).catch((error) => {
-      console.error(error)
-    })
+
+
+/**
+* @swagger
+* /durations/uid:
+*  put:
+*    description: activate/deactivate durations
+*    responses:
+*      201:
+*        description: Success
+*/
+app.put('/durations/:uid', async (req, res) => {
+  const ref = repetitionRef.child(req.params.uid).child(req.body.dayNum).child(req.body.durationTime)
+  await ref.child("active").get().then((snapshot) => {
+    if (snapshot.exists() && snapshot.val() === true) {
+      ref.update({ active: false })
+      res.status(201).send('deactivate durations successfully')
+    }
+    else if (snapshot.exists() && snapshot.val() === false) {
+      ref.update({ active: true })
+      res.status(201).send('activate durations successfully')
+    }
+    else {
+      console.log("No data available");
+    }
+  }).catch((error) => {
+    console.error(error);
+  })
 })
 
 
