@@ -37,7 +37,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 /**
 * @swagger
-* /doctors:
+* /doctors/:uid:
 *   get:
 *     description: GET doctor's session duration
 *     responses:
@@ -61,25 +61,29 @@ app.get('/doctors/:uid', async (req, res) => {
 
 /**
 * @swagger
-* /doctors:
+* /doctors/:uid:
 *   put:
-*    description: UPDATE doctor's session duration
+*    description: Update doctor's session duration
 *    responses:
 *     200:
 *       description: Success
 */
-app.put('/doctors/:key', async (req, res) => {
-  const newduration = req.body.session
-  await doctorsRef.child(req.params.key).child("session").get().then((snapshot) => {
-    if (snapshot.exists()) {
-      snapshot.val().update(newduration)
-      res.send(snapshot.val())
+app.put('/doctors/:uid', async (req, res) => {
+  const newDuration = {
+    session: req.body.session
+  }
+  try {
+    const sessionDuration = await doctorsRef.child(req.params.uid).child("session").get()
+    if (sessionDuration.exists()) {
+      await doctorsRef.child(req.params.uid).update(newDuration)
+      res.status(200).json('updated succesfully')
     } else {
-      res.status(404).send("No data available")
+      res.send("Not found")
     }
-  }).catch((error) => {
+
+  } catch (error) {
     console.error(error)
-  })
+  }
 })
 
 
