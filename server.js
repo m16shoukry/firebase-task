@@ -61,7 +61,7 @@ app.get('/doctors/:uid', async (req, res) => {
 
 /**
 * @swagger
-* /doctors/:uid:
+* /doctors/doctorId:
 *   put:
 *    description: Update doctor's session duration
 *    parameters:
@@ -94,54 +94,19 @@ app.put('/doctors/:uid', async (req, res) => {
 
 /** 
 * @swagger
-* /appointments:
+* /appointments/doctorId:
 *   post:
 *    description: Create new appointment
-*    parameters:
-*    - patient: title
-*      description: patientId
-*      required: true
-*      type: String
-*
-*    - corona: title
-*      description: corona
-*      required: true
-*      type: Boolean
-*
-*    - orderID: title
-*      description: orderID
-*      required: true
-*      type: Number
-*
-*    - packageName: title
-*      description: package Name
-*      required: true
-*      type: String
-*
-*    - patName: title
-*      description: patName
-*      required: true
-*      type: String
-*
-*    - paymentMethod: title
-*      description: Patient name
-*      required: true
-*      type: String
-*
-*    - status: title
-*      description: Patient name
-*      required: true
-*      type: String
-*
 *    responses:
 *      201:
 *       description: booked successfuly
 *       
 */
-app.post('/appointments', async (req, res) => {
+app.post('/appointments/:uid', async (req, res) => {
   try {
-    await appointmentsRef.child(req.params.uid).child().set({
-      Patient: req.body.Patient, //hashed
+    //check for available first
+    await appointmentsRef.child(req.params.uid).push().set({
+      Patient: req.body.Patient,
       corona: req.body.corona,
       orderID: req.body.orderID,
       packageName: req.body.packageName,
@@ -160,7 +125,7 @@ app.post('/appointments', async (req, res) => {
 
 /**
 * @swagger
-* /durations/uid:
+* /durations/doctorId:
 *  put:
 *    description: activate/deactivate durations
 *    responses:
@@ -188,7 +153,7 @@ app.put('/durations/:uid', async (req, res) => {
 
 /**
 * @swagger
-* /appointments/uid:
+* /appointments/doctorId:
 *  get:
 *    description: Get doctor’s appointments for a specific doctor
 *    responses:
